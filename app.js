@@ -81,20 +81,112 @@ function movePacman(e) {
 
   switch (e.key) {
     case 'ArrowLeft':
-      pacmanCurrentIndex -= 1
+      if (
+        pacmanCurrentIndex % width !== 0 &&
+        !squares[pacmanCurrentIndex - 1].classList.contains('wall') &&
+        !squares[pacmanCurrentIndex - 1].classList.contains('ghost-lair')
+      ) {
+        pacmanCurrentIndex -= 1
+      }
+      if (squares[pacmanCurrentIndex - 1] === squares[363]) {
+        pacmanCurrentIndex = 391
+
+      }
       break
     case 'ArrowRight':
-      pacmanCurrentIndex += 1
+      if (
+        pacmanCurrentIndex % width < width - 1 &&
+        !squares[pacmanCurrentIndex + 1].classList.contains('wall') &&
+        !squares[pacmanCurrentIndex + 1].classList.contains('ghost-lair')
+      ) {
+        pacmanCurrentIndex += 1
+      }
+      if (
+        squares[pacmanCurrentIndex + 1] === squares[392]
+      ) {
+        pacmanCurrentIndex = 364
+      }
       break
     case 'ArrowUp':
-      pacmanCurrentIndex -= width
+      if (
+        pacmanCurrentIndex - width  >= 0 &&
+        !squares[pacmanCurrentIndex - width].classList.contains('wall') &&
+        !squares[pacmanCurrentIndex + 1].classList.contains('ghost-lair')
+      ) {
+        pacmanCurrentIndex -= width
+      }
       break
     case 'ArrowDown':
-      pacmanCurrentIndex += width
+      if (
+        pacmanCurrentIndex + width < width * width &&
+        !squares[pacmanCurrentIndex + width].classList.contains('wall') &&
+        !squares[pacmanCurrentIndex + 1].classList.contains('ghost-lair')
+      ) {
+        pacmanCurrentIndex += width
+      }
+
       break
   }
   squares[pacmanCurrentIndex].classList.add('pac-man')
+  pacDotEaten()
+  powerPelletEaten()
+  // checkForGameOver()
+  // checkForWin()
 }
 document.addEventListener('keyup', movePacman)
+
+// What happens when you eat a pac-dot
+
+function pacDotEaten() {
+  if (squares[pacmanCurrentIndex].classList.contains('pac-dot')) {
+    score++
+    scoreDisplay.innerHTML = score
+    squares[pacmanCurrentIndex].classList.remove('pac-dot')
+  }
+}
+ function powerPelletEaten() {
+  if (squares[pacmanCurrentIndex].classList.contains('power-pellet')) {
+    score += 10
+    scoreDisplay.innerHTML = score
+    squares[pacmanCurrentIndex].classList.remove('power-pellet')
+  }
+ }
+// create ghosts using constructor
+class Ghost {
+  constructor(className, startIndex, speed) {
+    this.className = className
+    this.startIndex = startIndex
+    this.speed = speed
+    this.currentIndex = startIndex
+    this.isScared = false
+    this.timerId = NaN
+  }
+}
+// all my ghosts
+
+ghosts = [
+  new Ghost('blinky', 348, 250),
+  new Ghost('pinky', 376, 400),
+  new Ghost('inky', 351, 300),
+  new Ghost('clyde', 379, 500)
+]
+
+// draw my ghosts on the grid
+ghosts.forEach(ghost => {
+  squares[ghost.currentIndex].classList.add(ghost.className)
+  squares[ghost.currentIndex].classList.add('ghost')
+
+})
+
+//move ghosts randomly
+ghosts.forEach(ghost => moveGhost(ghost))
+
+function moveGhost(ghost) {
+  const directions = [-1, +1, width, -width]
+  const direction = directions[Math.floor(Math.random() * directions.length)]
+  ghost.timerId = setInterval(function() {
+    sqaures[ghost.currentIndex].classList.remove(ghost.className)
+
+}
 
 })
